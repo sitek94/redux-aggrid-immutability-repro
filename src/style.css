@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+  gap: 16px;
+  padding: 16px;
+}
+
+.grid {
+  height: 100%;
+  width: 100%;
+}
+
+.sidebar {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+h2,
+h3 {
+  margin: 8px;
+}
+
+pre {
+  margin: 0;
+}
+
+hr {
+  margin: 16px 0;
+  border: 0;
+  border-top: 2px solid #e0e0e0;
+}
+
+textarea {
+  display: block;
+}
+
+button {
+  margin: 8px 0;
+  display: block;
+}
