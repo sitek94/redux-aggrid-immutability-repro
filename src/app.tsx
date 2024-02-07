@@ -1,11 +1,7 @@
-import {
-  ColDef,
-  IDateFilterParams,
-  INumberFilterParams,
-  ITextFilterParams,
-} from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
+
+import {ColDef, INumberFilterParams, ITextFilterParams} from 'ag-grid-community'
 import {AgGridReact} from 'ag-grid-react'
 import {useMemo, useRef, useState} from 'react'
 
@@ -24,30 +20,6 @@ type OlympicData = {
   silver: number
   bronze: number
   total: number
-}
-
-const filterParams: IDateFilterParams = {
-  maxNumConditions: 1,
-  comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-    const dateAsString = cellValue
-    if (dateAsString == null) return -1
-    const dateParts = dateAsString.split('/')
-    const cellDate = new Date(
-      Number(dateParts[2]),
-      Number(dateParts[1]) - 1,
-      Number(dateParts[0]),
-    )
-    if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-      return 0
-    }
-    if (cellDate < filterLocalDateAtMidnight) {
-      return -1
-    }
-    if (cellDate > filterLocalDateAtMidnight) {
-      return 1
-    }
-    return 0
-  },
 }
 
 export const App = () => {
@@ -79,11 +51,6 @@ export const App = () => {
         defaultJoinOperator: 'OR',
       } as INumberFilterParams,
       maxWidth: 100,
-    },
-    {
-      field: 'date',
-      filter: 'agDateColumnFilter',
-      filterParams: filterParams,
     },
   ])
 
