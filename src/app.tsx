@@ -145,6 +145,19 @@ export const App = () => {
           Update Grid state from Redux
         </button>
 
+        <button
+          type="button"
+          onClick={() => {
+            const filterModelCopy = JSON.parse(
+              JSON.stringify(gridState.filterModel),
+            )
+            gridRef.current!.api.setFilterModel(filterModelCopy)
+          }}
+        >
+          Update Grid state from Redux
+          <br /> (using deep copy)
+        </button>
+
         <button onClick={() => gridRef.current!.api.setFilterModel(null)}>
           Reset Grid filters
         </button>
