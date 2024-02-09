@@ -1,34 +1,78 @@
-# React + TypeScript + Vite
+# Reproduction for issue with AG Grid, Redux and immutability
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+We encountered interesting issue with AG Grid, Redux and immutability, which we discovered after upgrading from AG Grid
+27 to 30.
 
-Currently, two official plugins are available:
+We persist filter model in DB and after fetching it from DB we keep it in Redux store.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses
-  [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast
-  Refresh
+When want to update grid filter model with the one stored in Redux store, we get following error:
 
-## Expanding the ESLint configuration
+```plaintext
+Uncaught TypeError: Cannot add property conditions, object is not extensible
+```
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+This is caused by AG Grid trying to add `conditions` property to the filter model, which is not allowed by Redux,
+because it violates immutability.
 
-- Configure the top-level `parserOptions` property like this:
+As a solution, we can clone the filter model before passing it to AG Grid.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
+**Old Filter Model**:
+
+```json
+{
+  "athlete": {
+    "filterType": "text",
+    "operator": "OR",
+    "condition1": {
+      "filterType": "text",
+      "type": "contains",
+      "filter": "mich"
+    },
+    "condition2": {
+      "filterType": "text",
+      "type": "contains",
+      "filter": "jul"
+    }
+  }
 }
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or
-  `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` &
-  `plugin:react/jsx-runtime` to the `extends` list
+**New Filter Model**:
+
+```json
+{
+  "athlete": {
+    "filterType": "text",
+    "operator": "OR",
+    "condition1": {
+      "filterType": "text",
+      "type": "contains",
+      "filter": "mich"
+    },
+    "condition2": {
+      "filterType": "text",
+      "type": "contains",
+      "filter": "jul"
+    },
+    "conditions": [
+      {
+        "filterType": "text",
+        "type": "contains",
+        "filter": "mich"
+      },
+      {
+        "filterType": "text",
+        "type": "contains",
+        "filter": "jul"
+      }
+    ]
+  }
+}
+```
+
+## Run the example
+
+```shell
+npm install
+npm run dev
+```
